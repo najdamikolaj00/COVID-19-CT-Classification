@@ -74,19 +74,18 @@ class CovidCTDataset(Dataset):
                   'label': int(self.img_list[idx][1])}
         return sample
 
-
 if __name__ == '__main__':
     trainset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='COVID/trainCT_COVID.txt',
-                              txt_NonCOVID='NonCOVID/trainCT_NonCOVID.txt',
+                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/trainCT_COVID.txt',
+                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/trainCT_NonCOVID.txt',
                               transform= train_transformer)
     valset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='COVID/valCT_COVID.txt',
-                              txt_NonCOVID='NonCOVID/valCT_NonCOVID.txt',
+                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/valCT_COVID.txt',
+                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/valCT_NonCOVID.txt',
                               transform= val_transformer)
     testset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='COVID/testCT_COVID.txt',
-                              txt_NonCOVID='NonCOVID/testCT_NonCOVID.txt',
+                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/testCT_COVID.txt',
+                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/testCT_NonCOVID.txt',
                               transform= val_transformer)
     print(trainset.__len__())
     print(valset.__len__())
