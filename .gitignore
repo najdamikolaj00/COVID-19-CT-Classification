@@ -1,2 +1,6 @@
-*.agdai
-MAlonzo/**
+# Ignore Python cache directories
+**/__pycache__/
+# Ignore virtualenv directory
+hnp-virtualenv/
+# Ignore txt files
+*.txt
