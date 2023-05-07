@@ -3,4 +3,6 @@
 # Ignore virtualenv directory
 hnp-virtualenv/
 # Ignore txt files
-*.txt
+LaTeX_script/*.txt
+# Ignore env directory
+env
