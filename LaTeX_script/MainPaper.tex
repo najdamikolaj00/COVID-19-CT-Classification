@@ -150,7 +150,7 @@ Key notes about data:
 \begin{table}[h]
 \label{imageDistributionAuthors}
 \centering
-\caption{Images distribution.}
+\caption{Author's images distribution.}
 \begin{tabular}{c|c|c|c}
 \cline{1-4}
 Type & NonCOVID-19 & COVID-19 & Total \\ \cline{1-4}
@@ -162,7 +162,14 @@ test & 105  & 98 & 203\\ \cline{1-4}
 
 
 \subsection{Research protocol}
-#It has to be changed -- like a bullet points
+\begin{enumerate}
+  \item Perform preprocessing on data and load dataset.
+  \item K-fold cross-validation or authors' based dataset split.
+  \item Model learning.
+  \item Fine-tuning the model based on the validation results.
+  \item Perform statistics (statystyka parowa).
+  \item Compare the metrics result.
+\end{enumerate}
 
 \subsection{Description of the experimental environment}
 The project will be written in Python programming language, with Jupyter Notebook as the preferred Integrated Development Environment on the Google Colab cloud-based service that provides free access to GPU resources. PyTorch and scikit-learn (sklearn), widely used Python modules for machine learning, will be utilized for the development of the CNN and other state-of-the-art machine learning approaches.
