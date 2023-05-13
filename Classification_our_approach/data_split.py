@@ -2,8 +2,7 @@ from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader
 import torch
 
-def k_fold_cv_dataset_split(dataset, batch_size=10):
-    k_folds = 5
+def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
     random_state = 42 
     kfold = KFold(n_splits=k_folds, shuffle=True, random_state=random_state)
 
@@ -21,8 +20,3 @@ def k_fold_cv_dataset_split(dataset, batch_size=10):
         val_loaders.append(val_loader)
     
     return train_loaders, val_loaders
-
-if __name__ == '__main__':
-    dataset = ...  # Initialize your dataset here
-
-    train_loaders, val_loaders = k_fold_cv_dataset_split(dataset, batch_size=10)

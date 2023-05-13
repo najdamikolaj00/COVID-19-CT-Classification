@@ -2,13 +2,12 @@ import torch
 
 def training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_loaders, num_epochs):
 
-# Training loop
     for fold in range(k_folds):
         train_loader = train_loaders[fold]
         val_loader = val_loaders[fold]
 
         for epoch in range(num_epochs):
-            # Training
+
             model.train()
             for batch_idx, batch in enumerate(train_loader):
                 # Forward pass
@@ -43,7 +42,6 @@ def training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_l
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
             
-            # Print statistics for the fold
             print(f'Fold: {fold+1}/{k_folds}, Epoch: {epoch+1}/{num_epochs}, '
                 f'Train Loss: {loss.item():.4f}, Val Loss: {val_loss/len(val_loader):.4f}, '
                 f'Val Acc: {(100 * correct / total):.2f}%')
