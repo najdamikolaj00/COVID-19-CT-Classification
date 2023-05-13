@@ -1,13 +1,13 @@
-import torch
+import torch as tc
 import torchvision.transforms as transforms
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from PIL import Image
 import os
 
-torch.cuda.empty_cache()
+tc.cuda.empty_cache()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-train_transformer = transforms.Compose([
+transformer = transforms.Compose([
     transforms.Resize(256),
     transforms.RandomResizedCrop((224),scale=(0.5,1.0)),
     transforms.RandomHorizontalFlip(),
@@ -15,14 +15,6 @@ train_transformer = transforms.Compose([
     normalize
 ])
 
-val_transformer = transforms.Compose([
-    transforms.Resize(224),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    normalize
-])
-
-batchsize=10
 def read_txt(txt_path):
     with open(txt_path) as f:
         lines = f.readlines()
@@ -30,7 +22,7 @@ def read_txt(txt_path):
     return txt_data
 
 class CovidCTDataset(Dataset):
-    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, transform=None):
+    def __init__(self, root_dir, txt_COVID, txt_NonCOVID, transform=transformer):
         """
         Args:
             txt_path (string): Path to the txt file with annotations.
@@ -67,7 +59,7 @@ class CovidCTDataset(Dataset):
         return len(self.img_list)
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
+        if tc.is_tensor(idx):
             idx = idx.tolist()
 
         img_path = self.img_list[idx][0]
@@ -79,15 +71,5 @@ class CovidCTDataset(Dataset):
                   'label': int(self.img_list[idx][1]),
                   'img_name': self.img_list[idx][0]}
         return sample
-
-if __name__ == '__main__':
-    dataset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='Classification_our_approach/CT_COVID.txt',
-                              txt_NonCOVID='Classification_our_approach/CT_NonCOVID.txt',
-                              transform=train_transformer)
-
-    print(dataset.__len__())
-    print(dataset.__getitem__(700))
-    dataset_loader = DataLoader(dataset, batch_size=batchsize, drop_last=False, shuffle=True)
 
     
