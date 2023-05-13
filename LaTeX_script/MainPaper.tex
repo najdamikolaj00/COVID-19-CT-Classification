@@ -88,11 +88,9 @@ This paper presents two approaches to dealing with the dataset: one based on the
 \subsection{Research questions}
 
 \begin{itemize}
-  \item Is it possible to make a machine learning model that is able to classify medical images based on low-quality data obtained from scientific articles?
-  \item Will the state-of-art approaches outperform deep learning methods?
-  \item How really the right way of splitting the data will influence the performance of methods presented by the authors of the challenge?
-  \item What the deep learning model took into consideration when predicting the class of image?
-  \item Does the data augmentation improve the model generalization?
+  \item Possibility of teaching the model medical image-related task using images obtained from scientific papers.
+  \item Influence of the dataset split approaches on the models' performance.
+  \item What the model took into consideration when predicting the class of image?
 \end{itemize}
 
 \subsection{Precise experiment purpose}
@@ -152,7 +150,7 @@ Key notes about data:
 \begin{table}[h]
 \label{imageDistributionAuthors}
 \centering
-\caption{Images distribution.}
+\caption{Author's images distribution.}
 \begin{tabular}{c|c|c|c}
 \cline{1-4}
 Type & NonCOVID-19 & COVID-19 & Total \\ \cline{1-4}
@@ -164,8 +162,14 @@ test & 105  & 98 & 203\\ \cline{1-4}
 
 
 \subsection{Research protocol}
-
-The study will acquire the dataset for training and testing the models through the authors' approach or k-fold cross-validation. Further, the images will be subjected to augmentation to produce four distinct datasets. The performance of the best model using the authors' approach will be compared against other state-of-the-art methods, including our proposed CNN. Common metrics such as F1-score, confusion matrix, or ROC Curve will be used to evaluate the results. Moreover, visualization will be attempted to explain the factors influencing the best model's prediction of image labels.
+\begin{enumerate}
+  \item Perform preprocessing on data and load dataset.
+  \item K-fold cross-validation or authors' based dataset split.
+  \item Model learning.
+  \item Fine-tuning the model based on the validation results.
+  \item Perform statistics (statystyka parowa).
+  \item Compare the metrics result.
+\end{enumerate}
 
 \subsection{Description of the experimental environment}
 The project will be written in Python programming language, with Jupyter Notebook as the preferred Integrated Development Environment on the Google Colab cloud-based service that provides free access to GPU resources. PyTorch and scikit-learn (sklearn), widely used Python modules for machine learning, will be utilized for the development of the CNN and other state-of-the-art machine learning approaches.
