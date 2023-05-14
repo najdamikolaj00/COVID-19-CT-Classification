@@ -9,43 +9,51 @@ class SimpleCNN(tc.nn.Module):
         super(SimpleCNN, self).__init__()
 
         self.layer_1 = tc.nn.Sequential(
-            tc.nn.Conv2d(3, 32, 3, 1, padding=1),
-            tc.nn.BatchNorm2d(32),
-            tc.nn.ReLU()
+            tc.nn.Conv2d(3, 16, kernel_size=3, padding=1),
+            tc.nn.BatchNorm2d(16),
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         ) 
         self.layer_2 = tc.nn.Sequential(
-            tc.nn.Conv2d(32, 32, 3, stride=2, padding=1),
+            tc.nn.Conv2d(16, 32, kernel_size=3, padding=1),
             tc.nn.BatchNorm2d(32),
-            tc.nn.ReLU()
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_3 = tc.nn.Sequential(
-            tc.nn.Conv2d(32, 64, 3, stride=1, padding=1),
+            tc.nn.Conv2d(32, 64, kernel_size=3, padding=1),
             tc.nn.BatchNorm2d(64),
-            tc.nn.ReLU()
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_4 = tc.nn.Sequential(
-            tc.nn.Conv2d(64, 64, 3, stride=2, padding=1),
-            tc.nn.BatchNorm2d(64),
-            tc.nn.ReLU()
+            tc.nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            tc.nn.BatchNorm2d(128),
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_5 = tc.nn.Sequential(
-            tc.nn.Conv2d(64, 128, 3, stride=1, padding=1),
+            tc.nn.Conv2d(128, 128, kernel_size=3, padding=1),
             tc.nn.BatchNorm2d(128),
-            tc.nn.ReLU()
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_6 = tc.nn.Sequential(
-            tc.nn.Conv2d(128, 128, 3, stride=2, padding=1),
-            tc.nn.BatchNorm2d(128),
-            tc.nn.ReLU()
+            tc.nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            tc.nn.BatchNorm2d(256),
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer_7 = tc.nn.Sequential(
-            tc.nn.Conv2d(128, 128, 3, stride=1, padding=1),
-            tc.nn.BatchNorm2d(128),
-            tc.nn.ReLU()
+            tc.nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            tc.nn.BatchNorm2d(256),
+            tc.nn.ReLU(),
+            tc.nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.avg_pool = tc.nn.Sequential(tc.nn.AvgPool2d(1,1))
+        self.avg_pool = tc.nn.AdaptiveAvgPool2d(1)
         self.last_layer = tc.nn.Sequential(
-            tc.nn.Linear(128*28*28, 4)
+            tc.nn.Flatten(),
+            tc.nn.Linear(256, 2)
         )
 
     def forward(self, x):
@@ -57,7 +65,7 @@ class SimpleCNN(tc.nn.Module):
         x = self.layer_6(x)
         x = self.layer_7(x)
         x = self.avg_pool(x)
-        x = x.view(-1, 128*28*28)
+        x = x.view(-1, 256)
         x = self.last_layer(x)
         return x
     
@@ -70,7 +78,7 @@ if __name__ == '__main__':
     learning_rate = 0.003
     batch_size=10
     k_folds = 5
-    num_epochs = 20
+    num_epochs = 8
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
     
