@@ -13,8 +13,8 @@ def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
         train_dataset = torch.utils.data.Subset(dataset, train_idx)
         val_dataset = torch.utils.data.Subset(dataset, val_idx)
 
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=False)
-        val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False, shuffle=False)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
         train_loaders.append(train_loader)
         val_loaders.append(val_loader)
