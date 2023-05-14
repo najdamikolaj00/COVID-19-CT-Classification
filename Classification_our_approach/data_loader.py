@@ -50,6 +50,9 @@ class CovidCTDataset(Dataset):
         self.classes = ['CT_COVID','CT_NonCOVID']
         self.num_cls = len(self.classes)
         self.img_list = []
+
+        #Creating the list of inner lists that contain the file paths to images and their classes
+        #It allows to manage the memory usage by ommiting loading every image from the dataset
         for c in range(self.num_cls):
             cls_list = [[os.path.join(self.root_dir,self.classes[c],item), c] for item in read_txt(self.txt_path[c])]
             self.img_list += cls_list
@@ -71,5 +74,3 @@ class CovidCTDataset(Dataset):
                   'label': int(self.img_list[idx][1]),
                   'img_name': self.img_list[idx][0]}
         return sample
-
-    
