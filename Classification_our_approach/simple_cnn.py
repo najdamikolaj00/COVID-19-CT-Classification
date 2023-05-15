@@ -1,8 +1,4 @@
 import torch as tc
-from data_loader import CovidCTDataset
-from torch.utils.data import DataLoader
-from data_split import k_fold_cv_dataset_split
-from training_loop import training_loop
 
 class SimpleCNN(tc.nn.Module):
     def __init__(self):
@@ -68,25 +64,3 @@ class SimpleCNN(tc.nn.Module):
         x = x.view(-1, 256)
         x = self.last_layer(x)
         return x
-    
-if __name__ == '__main__':
-    dataset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='Classification_our_approach/CT_COVID.txt',
-                              txt_NonCOVID='Classification_our_approach/CT_NonCOVID.txt')
-
-    print(dataset.__len__())
-    learning_rate = 0.003
-    batch_size=10
-    k_folds = 5
-    num_epochs = 8
-
-    dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
-    
-    model = SimpleCNN()
-    parameters = model.parameters()
-    optimizer = tc.optim.Adam(parameters, lr=learning_rate)
-    loss_function = tc.nn.CrossEntropyLoss()
-
-    train_loaders, val_loaders = k_fold_cv_dataset_split(dataset, k_folds=k_folds, batch_size=batch_size)
-
-    training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_loaders, num_epochs)
