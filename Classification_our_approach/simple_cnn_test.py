@@ -17,8 +17,8 @@ def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
         train_dataset = tc.utils.data.Subset(dataset, train_idx)
         val_dataset = tc.utils.data.Subset(dataset, val_idx)
 
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=False)
+        val_loader = DataLoader(val_dataset, batch_size=batch_size, drop_last=False, shuffle=False)
 
         train_loaders.append(train_loader)
         val_loaders.append(val_loader)
@@ -77,8 +77,8 @@ def training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_l
 
 if __name__ == "__main__":        
     dataset = CovidCTDataset(root_dir=r'Data/',
-                                txt_COVID='Classification_our_approach/CT_COVID.txt',
-                                txt_NonCOVID='Classification_our_approach/CT_NonCOVID.txt')
+                                txt_COVID=r'Classification_our_approach/CT_COVID.txt',
+                                txt_NonCOVID=r'Classification_our_approach/CT_NonCOVID.txt')
     print(dataset.__len__())
 
     learning_rate = 0.003
