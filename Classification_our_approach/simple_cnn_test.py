@@ -1,3 +1,4 @@
+import os
 import torch as tc
 from data_loader import CovidCTDataset
 from torch.utils.data import DataLoader
@@ -50,6 +51,16 @@ def training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_l
 
             print(f'Fold: {fold+1}/{k_folds}, Epoch: {epoch+1}/{num_epochs},'
             f'Train Loss: {loss.item():.4f}')
+
+            if os.path.isfile("Classification_our_approach/simple_cnn_train_results.txt"):
+                with open("Classification_our_approach/simple_cnn_train_results.txt", "a") as file:
+                    file.write(f'{fold+1}, {epoch+1}, '
+                            f'{loss.item():.4f}\n')
+            else:
+                with open("Classification_our_approach/simple_cnn_train_results.txt", "a") as file:
+                    file.write('Fold, Epoch, Train Loss\n')
+                    file.write(f'{fold+1}, {epoch+1}, '
+                            f'{loss.item():.4f}\n')
             
             # Validation
             model.eval()
@@ -73,6 +84,16 @@ def training_loop(model, optimizer, loss_function, k_folds, train_loaders, val_l
         
         print(f'Val Loss: {val_loss/len(val_loader):.4f},'
             f'Val Acc: {(100 * correct / total):.2f}%')
+                    
+        if os.path.isfile("Classification_our_approach/simple_cnn_val_results.txt"):
+            with open("Classification_our_approach/simple_cnn_val_results.txt", "a") as file:
+                file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
+                        f'{(100 * correct / total):.2f}\n')
+        else:
+            with open("Classification_our_approach/simple_cnn_val_results.txt", "a") as file:
+                file.write('Fold, Val Loss, Val Acc [%]\n')
+                file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
+                        f'{(100 * correct / total):.2f}\n')
 
 
 if __name__ == "__main__":        
@@ -84,7 +105,7 @@ if __name__ == "__main__":
     learning_rate = 0.003
     batch_size=10
     k_folds = 5
-    num_epochs = 8
+    num_epochs = 5
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
