@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from sklearn.model_selection import KFold
 
 from simple_cnn import SimpleCNN
+from modcnn import ModCNN
 
 def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
     random_state = 42
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
-    model = SimpleCNN()
+    model = ModCNN()
     parameters = model.parameters()
 
     optimizer = tc.optim.Adam(parameters, lr=learning_rate)
