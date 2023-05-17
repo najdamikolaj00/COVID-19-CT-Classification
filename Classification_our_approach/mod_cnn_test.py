@@ -2,10 +2,9 @@ import os
 import torch as tc
 from data_loader import CovidCTDataset
 from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
 
 from sklearn.model_selection import KFold
-
-from simple_cnn import SimpleCNN
 from modcnn import ModCNN
 
 def check_cuda_availability():
@@ -37,6 +36,17 @@ def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
 
     return train_loaders, val_loaders
 
+train_transformer = transforms.Compose([
+    transforms.Resize(256, antialias=True),
+    transforms.RandomResizedCrop((224),scale=(0.5,1.0)),
+    transforms.RandomHorizontalFlip(),
+])
+
+val_transformer = transforms.Compose([
+    transforms.Resize(224, antialias=True),
+    transforms.CenterCrop(224)
+])
+
 def training_loop(model_name, model, optimizer, loss_function, k_folds, train_loaders, val_loaders, num_epochs):
 
     for fold in range(k_folds):
@@ -50,6 +60,9 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
                 # Forward pass
                 inputs = batch['img']
                 labels = batch['label']
+
+                # Apply train transforms to inputs
+                inputs = train_transformer(inputs)
 
                 inputs = inputs.to(device)  # Move inputs to GPU
                 labels = labels.to(device)  # Move labels to GPU
@@ -87,6 +100,8 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
             for batch in val_loader:
                 inputs = batch['img']
                 labels = batch['label']
+
+                inputs = val_transformer(inputs)
 
                 inputs = inputs.to(device)  # Move inputs to GPU
                 labels = labels.to(device)  # Move labels to GPU

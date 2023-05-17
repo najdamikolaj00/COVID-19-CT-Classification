@@ -8,9 +8,7 @@ tc.cuda.empty_cache()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 transformer = transforms.Compose([
-    transforms.Resize(256),
-    transforms.RandomResizedCrop((224),scale=(0.5,1.0)),
-    transforms.RandomHorizontalFlip(),
+    transforms.Resize((224, 224), antialias=True),
     transforms.ToTensor(),
     normalize
 ])
