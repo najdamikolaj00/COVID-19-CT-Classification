@@ -38,7 +38,8 @@ class ModCNN(tc.nn.Module):
             tc.nn.BatchNorm2d(512),
             tc.nn.ReLU(),
             tc.nn.MaxPool2d(kernel_size=2)
-        )    
+        )
+        self.avg_pool = tc.nn.AdaptiveAvgPool2d(1)    
         self.last_layer = tc.nn.Sequential(
             tc.nn.Flatten(),
             tc.nn.Linear(512, 2),
@@ -51,6 +52,7 @@ class ModCNN(tc.nn.Module):
         x = self.layer_3(x)
         x = self.layer_4(x)
         x = self.layer_5(x)
+        x = self.avg_pool(x)
         x = x.view(-1, 512)
         x = self.last_layer(x)
         return x
