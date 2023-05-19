@@ -75,31 +75,16 @@ def train(optimizer, epoch):
     print('\nTrain set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
         train_loss/len(train_loader.dataset), train_correct, len(train_loader.dataset),
         100.0 * train_correct / len(train_loader.dataset)))
-    f = open('model_result/{}.txt'.format(modelname), 'a+')
-    f.write('\nTrain set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        train_loss/len(train_loader.dataset), train_correct, len(train_loader.dataset),
-        100.0 * train_correct / len(train_loader.dataset)))
-    f.write('\n')
-    f.close()
 
-def val(epoch):
+def val():
     
     model.eval()
     test_loss = 0
     correct = 0
-    results = []
-    
-    TP = 0
-    TN = 0
-    FN = 0
-    FP = 0
-    
     
     criteria = tc.nn.CrossEntropyLoss()
-    # Don't update model
+
     with tc.no_grad():
-        tpr_list = []
-        fpr_list = []
         
         predlist=[]
         scorelist=[]
@@ -107,19 +92,15 @@ def val(epoch):
         # Predict
         for batch_index, batch_samples in enumerate(val_loader):
             data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
-#            data = data[:, 0, :, :]
-#            data = data[:, None, :, :]
+
             output = model(data)
             
             test_loss += criteria(output, target.long())
             score = F.softmax(output, dim=1)
             pred = output.argmax(dim=1, keepdim=True)
-#             print('target',target.long()[:, 2].view_as(pred))
+
             correct += pred.eq(target.long().view_as(pred)).sum().item()
             
-#             print(output[:,1].cpu().numpy())
-#             print((output[:,1]+output[:,0]).cpu().numpy())
-#             predcpu=(output[:,1].cpu().numpy())/((output[:,1]+output[:,0]).cpu().numpy())
             targetcpu=target.long().cpu().numpy()
             predlist=np.append(predlist, pred.cpu().numpy())
             scorelist=np.append(scorelist, score.cpu().numpy()[:,1])
@@ -128,25 +109,16 @@ def val(epoch):
           
     return targetlist, scorelist, predlist
 
-def test(epoch):
+def test():
     
     model.eval()
     test_loss = 0
     correct = 0
-    results = []
-    
-    TP = 0
-    TN = 0
-    FN = 0
-    FP = 0
-    
-    
+
     criteria = tc.nn.CrossEntropyLoss()
     # Don't update model
     with tc.no_grad():
-        tpr_list = []
-        fpr_list = []
-        
+
         predlist=[]
         scorelist=[]
         targetlist=[]
@@ -204,26 +176,19 @@ if __name__ == '__main__':
     p_list = []
     acc_list = []
     AUC_list = []
-    # TP = 0
-    # TN = 0
-    # FN = 0
-    # FP = 0
+
     vote_pred = np.zeros(valset.__len__())
     vote_score = np.zeros(valset.__len__())
 
-    #optimizer = optim.SGD(model.parameters(), lr=0.001, momentum = 0.9)
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
-    #scheduler = StepLR(optimizer, step_size=1)
 
-    total_epoch = 3000
+    total_epoch = 50
     for epoch in range(1, total_epoch+1):
         train(optimizer, epoch)
         
-        targetlist, scorelist, predlist = val(epoch)
-        print('target',targetlist)
-        print('score',scorelist)
-        print('predict',predlist)
+        targetlist, scorelist, predlist = val()
+ 
         vote_pred = vote_pred + predlist 
         vote_score = vote_score + scorelist 
 
@@ -258,8 +223,6 @@ if __name__ == '__main__':
             print('AUC', AUC)
             
             
-            
-    #         if epoch == total_epoch:
             tc.save(model.state_dict(), "model_backup/{}.pt".format(modelname))  
             
             vote_pred = np.zeros(valset.__len__())
@@ -272,10 +235,6 @@ if __name__ == '__main__':
             epoch, r, p, F1, acc, AUC))
             f.close()
 
-
-    # In[145]:
-
-
     # test
     bs = 10
     import warnings
@@ -285,14 +244,10 @@ if __name__ == '__main__':
     p_list = []
     acc_list = []
     AUC_list = []
-    # TP = 0
-    # TN = 0
-    # FN = 0
-    # FP = 0
+
     vote_pred = np.zeros(testset.__len__())
     vote_score = np.zeros(testset.__len__())
 
-    #optimizer = optim.SGD(model.parameters(), lr=0.001, momentum = 0.9)
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
     scheduler = StepLR(optimizer, step_size=1)
@@ -300,10 +255,8 @@ if __name__ == '__main__':
     total_epoch = 10
     for epoch in range(1, total_epoch+1):
         
-        targetlist, scorelist, predlist = test(epoch)
-    #     print('target',targetlist)
-    #     print('score',scorelist)
-    #     print('predict',predlist)
+        targetlist, scorelist, predlist = test()
+
         vote_pred = vote_pred + predlist 
         vote_score = vote_score + scorelist 
         
@@ -332,8 +285,6 @@ if __name__ == '__main__':
             vote_pred[vote_pred <= (votenum/2)] = 0
             vote_pred[vote_pred > (votenum/2)] = 1
             
-    #         print('vote_pred', vote_pred)
-    #         print('targetlist', targetlist)
             TP = ((vote_pred == 1) & (targetlist == 1)).sum()
             TN = ((vote_pred == 0) & (targetlist == 0)).sum()
             FN = ((vote_pred == 0) & (targetlist == 1)).sum()
