@@ -20,7 +20,7 @@ class SimpleCNN(tc.nn.Module):
             tc.nn.MaxPool2d(2, 2)
         )
         self.layer2 = tc.nn.Sequential(
-            tc.nn.Linear(32 * 16 * 16, 2)
+            tc.nn.Linear(401408, 2)
         )
 
     def forward(self, x):

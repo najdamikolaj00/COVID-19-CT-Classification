@@ -138,14 +138,14 @@ if __name__ == "__main__":
                              txt_NonCOVID=r'Classification_our_approach/CT_NonCOVID.txt')
     print(dataset.__len__())
 
-    learning_rate = 0.003
+    learning_rate = 0.0001
     batch_size = 10
     k_folds = 5
-    num_epochs = 5
+    num_epochs = 20
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
-    model_name = 'ModCNN'
+    model_name = f'SimpleCNN_k{k_folds}_epoch{num_epochs}_batch{batch_size}'
     model = SimpleCNN()
     model.to(device)  # Move model to GPU
     parameters = model.parameters()
