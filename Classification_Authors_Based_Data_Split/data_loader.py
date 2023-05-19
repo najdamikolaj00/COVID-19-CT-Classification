@@ -1,28 +1,10 @@
 import torch
-import torchvision.transforms as transforms
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from PIL import Image
 import os
 
 torch.cuda.empty_cache()
 
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-train_transformer = transforms.Compose([
-    transforms.Resize(256),
-    transforms.RandomResizedCrop((224),scale=(0.5,1.0)),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    normalize
-])
-
-val_transformer = transforms.Compose([
-    transforms.Resize(224),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    normalize
-])
-
-batchsize=10
 def read_txt(txt_path):
     with open(txt_path) as f:
         lines = f.readlines()
@@ -73,25 +55,3 @@ class CovidCTDataset(Dataset):
         sample = {'img': image,
                   'label': int(self.img_list[idx][1])}
         return sample
-
-if __name__ == '__main__':
-    trainset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/trainCT_COVID.txt',
-                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/trainCT_NonCOVID.txt',
-                              transform= train_transformer)
-    valset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/valCT_COVID.txt',
-                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/valCT_NonCOVID.txt',
-                              transform= val_transformer)
-    testset = CovidCTDataset(root_dir='Data/',
-                              txt_COVID='Classification_Authors_Based_Data_Split/COVID/testCT_COVID.txt',
-                              txt_NonCOVID='Classification_Authors_Based_Data_Split/NonCOVID/testCT_NonCOVID.txt',
-                              transform= val_transformer)
-    print(trainset.__len__())
-    print(valset.__len__())
-    print(testset.__len__())
-
-    train_loader = DataLoader(trainset, batch_size=batchsize, drop_last=False, shuffle=True)
-    val_loader = DataLoader(valset, batch_size=batchsize, drop_last=False, shuffle=False)
-    test_loader = DataLoader(testset, batch_size=batchsize, drop_last=False, shuffle=False)
-    
