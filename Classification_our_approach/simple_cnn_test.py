@@ -80,12 +80,12 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
             print(f'Fold: {fold+1}/{k_folds}, Epoch: {epoch+1}/{num_epochs},'
                   f'Train Loss: {loss.item():.4f}')
 
-            if os.path.isfile(f"Classification_our_approach/{model_name}_train_results.txt"):
-                with open(f"Classification_our_approach/{model_name}_train_results.txt", "a") as file:
+            if os.path.isfile(f"Classification_our_approach/results/{model_name}_train_results.txt"):
+                with open(f"Classification_our_approach/results/{model_name}_train_results.txt", "a") as file:
                     file.write(f'{fold+1}, {epoch+1}, '
                                f'{loss.item():.4f}\n')
             else:
-                with open(f"Classification_our_approach/{model_name}_train_results.txt", "a") as file:
+                with open(f"Classification_our_approach/results/{model_name}_train_results.txt", "a") as file:
                     file.write('Fold, Epoch, Train Loss\n')
                     file.write(f'{fold+1}, {epoch+1}, '
                                f'{loss.item():.4f}\n')
@@ -119,12 +119,12 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
         print(f'Val Loss: {val_loss/len(val_loader):.4f},'
                 f'Val Acc: {(100 * correct / total):.2f}%')
 
-        if os.path.isfile(f"Classification_our_approach/{model_name}_val_results.txt"):
-            with open(f"Classification_our_approach/{model_name}_val_results.txt", "a") as file:
+        if os.path.isfile(f"Classification_our_approach/results/{model_name}_val_results.txt"):
+            with open(f"Classification_our_approach/results/{model_name}_val_results.txt", "a") as file:
                 file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
                             f'{(100 * correct / total):.2f}\n')
         else:
-            with open(f"Classification_our_approach/{model_name}_val_results.txt", "a") as file:
+            with open(f"Classification_our_approach/results/{model_name}_val_results.txt", "a") as file:
                 file.write('Fold, Val Loss, Val Acc [%]\n')
                 file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
                             f'{(100 * correct / total):.2f}\n')
