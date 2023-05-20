@@ -3,13 +3,13 @@ import torch as tc
 from data_loader import CovidCTDataset
 import torchvision.transforms as transforms
 from simple_cnn import SimpleCNN
-
+import os
 import torch.nn.functional as F
 import torch.optim as optim
 
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import  DataLoader
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import f1_score, roc_auc_score
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 train_transformer = transforms.Compose([
@@ -37,69 +37,100 @@ def check_cuda_availability():
         device = tc.device("cpu")
     return device
 
-def training_loop(model, optimizer, loss_function, train_loader, val_loader, num_epochs):
+def training_loop(model, model_name, optimizer, loss_function, train_loader, val_loader, num_epochs):
     model.train()
-    train_loss = 0
-    train_correct = 0
-    total_train = 0
+
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
 
     for epoch in range(num_epochs):
+        epoch_loss = 0
+
         for batch_index, batch_samples in enumerate(train_loader):
             data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
 
-            optimizer.zero_grad()
             output = model(data)
             loss = loss_function(output, target.long())
+
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-            train_loss += loss.item() * data.size(0)
-            _, predicted = output.max(1)
-            train_correct += predicted.eq(target).sum().item()
-            total_train += data.size(0)
+            epoch_loss += loss.item()
 
+            # Apply the learning rate scheduler
+            scheduler.step()
 
-            print('Train Epoch: {} ]\tLoss: {:.6f}'.format(
-                epoch, loss.item()))
+        average_loss = epoch_loss / len(train_loader)
+
+        print(f'Epoch: {epoch+1}/{num_epochs},' 
+            f'Average Train Loss: {average_loss:.4f}')
+        
+        if os.path.isfile(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt"):
+            with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt", "a") as file:
+                file.write(f'{epoch+1}, {average_loss:.4f}\n')
+        else:
+            with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt", "a") as file:
+                file.write('Epoch, Average Train Loss\n')
+                file.write(f'{epoch+1}, {average_loss:.4f}\n')
+
 
     
-    model.eval()
-    val_loss = 0.0
-    correct = 0
-    total = 0
+        model.eval()
+        val_loss = 0.0
+        correct = 0
+        total = 0
+        predictions = []
+        targets = []
 
-    with tc.no_grad():
-        for batch_samples in val_loader:
-            data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
+        with tc.no_grad():
+            for batch_samples in val_loader:
+                data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
 
-            inputs = data.to(device)  # Move inputs to GPU
-            labels = target.to(device)  # Move labels to GPU
+                inputs = data.to(device)  # Move inputs to GPU
+                labels = target.to(device)  # Move labels to GPU
 
-            outputs = model(inputs)
+                outputs = model(inputs)
 
-            # Compute validation loss
-            val_loss += loss_function(outputs, labels).item()
+                # Compute validation loss
+                batch_loss = loss_function(outputs, labels).item()
+                val_loss += batch_loss
 
-            # Compute accuracy
-            _, predicted = tc.max(outputs, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+                # Compute accuracy
+                _, predicted = tc.max(outputs, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
 
-    print(f'Val Loss: {val_loss/len(val_loader):.4f},'
-            f'Val Acc: {(100 * correct / total):.2f}%')
+                predictions.extend(predicted.tolist())
+                targets.extend(target.tolist())
 
+        average_val_loss = val_loss / len(val_loader)
+   
+        f1 = f1_score(targets, predictions)
+        auc = roc_auc_score(targets, predictions)
+
+        print(f'Epoch: {epoch+1}/{num_epochs}, Average Val Loss: {average_val_loss:.4f}, Val Acc: {(100 * correct / total):.2f}%, F1 Score: {f1:.4f}, AUC: {auc:.4f}')
+
+        if os.path.isfile(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt"):
+            with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt", "a") as file:
+                file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
+        else:
+            with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt", "a") as file:
+                file.write('Epoch, Average Val Loss, Val Acc, F1 Score, AUC\n')
+                file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
 
 def test(model, loss_function, test_loader):
     model.eval()
     test_loss = 0
     test_correct = 0
     total_test = 0
+    predictions = []
+    targets = []
 
     with tc.no_grad():
         for batch_samples in test_loader:
             data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
 
-            output = model(data)
+            output = model(data).to(device)
             loss = loss_function(output, target.long())
 
             test_loss += loss.item() * data.size(0)
@@ -107,12 +138,26 @@ def test(model, loss_function, test_loader):
             test_correct += predicted.eq(target).sum().item()
             total_test += data.size(0)
 
+            # Store predictions and targets for F1 score and AUC calculation
+            predictions.extend(predicted.tolist())
+            targets.extend(target.tolist())
+    
     test_loss /= total_test
     test_accuracy = 100.0 * test_correct / total_test
+    f1 = f1_score(targets, predictions)
+    auc = roc_auc_score(targets, predictions)
 
-    print('Test set: Average loss: {:.4f}, Accuracy: {:.2f}%\n'.format(
-        test_loss, test_accuracy))
+    print('Test set: Average loss: {:.4f}, Accuracy: {:.2f}%, F1 Score: {:.4f}, AUC: {:.4f}\n'.format(
+        test_loss, test_accuracy, f1, auc))
 
+    if os.path.isfile(f"Classification_Authors_Based_Data_Split/results/{model_name}_test_results.txt"):
+        with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_test_results.txt", "a") as file:
+            file.write(f'{test_loss}, {test_accuracy}, {f1}, {auc}\n')
+    else:
+        with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_test_results.txt", "a") as file:
+            file.write('Average loss, Accuracy, F1 Score, AUC\n')
+            file.write(f'{test_loss}, {test_accuracy}, {f1}, {auc}\n')
+    
 if __name__ == '__main__':
     device = check_cuda_availability()    
     batchsize=10
@@ -131,16 +176,17 @@ if __name__ == '__main__':
     print(trainset.__len__())
     print(valset.__len__())
     print(testset.__len__())
-    model = SimpleCNN().cuda()
-    optimizer = tc.optim.Adam(model.parameters(), lr=0.001)
+
+    num_epochs = 50
+    model_name = f'SimpleCNN_epoch{num_epochs}_batch{batchsize}'
+    model = SimpleCNN().to(device)
+
+    optimizer = tc.optim.Adam(model.parameters(), lr=0.0001)
     loss_function = tc.nn.CrossEntropyLoss()
 
     train_loader = DataLoader(trainset, batch_size=batchsize, drop_last=False, shuffle=True)
     val_loader = DataLoader(valset, batch_size=batchsize, drop_last=False, shuffle=False)
     test_loader = DataLoader(testset, batch_size=batchsize, drop_last=False, shuffle=False)
 
-
-    num_epochs = 20
-
-    training_loop(model, optimizer, loss_function, train_loader, val_loader, num_epochs)
+    training_loop(model, model_name, optimizer, loss_function, train_loader, val_loader, num_epochs)
     test(model, loss_function, test_loader)
