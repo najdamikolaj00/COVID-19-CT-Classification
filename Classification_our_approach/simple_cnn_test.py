@@ -3,7 +3,7 @@ import torch as tc
 from data_loader import CovidCTDataset
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
-
+from sklearn.metrics import f1_score, roc_auc_score
 from sklearn.model_selection import KFold
 from simple_cnn import SimpleCNN
 
@@ -90,44 +90,49 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
                     file.write(f'{fold+1}, {epoch+1}, '
                                f'{loss.item():.4f}\n')
 
-            # Validation
-            model.eval()
-            val_loss = 0.0
-            correct = 0
-            total = 0
-            # torch.no_grad ensures that no gradients are computed during this process, as we don't need them for evaluation.
+        model.eval()
+        val_loss = 0.0
+        correct = 0
+        total = 0
+        predictions = []
+        targets = []
+
         with tc.no_grad():
-            for batch in val_loader:
-                inputs = batch['img']
-                labels = batch['label']
+            for batch_samples in val_loader:
+                data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
 
-                inputs = val_transformer(inputs)
-
-                inputs = inputs.to(device)  # Move inputs to GPU
-                labels = labels.to(device)  # Move labels to GPU
+                inputs = data.to(device)  # Move inputs to GPU
+                labels = target.to(device)  # Move labels to GPU
 
                 outputs = model(inputs)
 
                 # Compute validation loss
-                val_loss += loss_function(outputs, labels).item()
+                batch_loss = loss_function(outputs, labels).item()
+                val_loss += batch_loss
 
                 # Compute accuracy
                 _, predicted = tc.max(outputs, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-        print(f'Val Loss: {val_loss/len(val_loader):.4f},'
-                f'Val Acc: {(100 * correct / total):.2f}%')
+                predictions.extend(predicted.tolist())
+                targets.extend(target.tolist())
+
+        average_val_loss = val_loss / len(val_loader)
+   
+        f1 = f1_score(targets, predictions)
+        auc = roc_auc_score(targets, predictions)
+
+        print(f'Epoch: {epoch+1}/{num_epochs}, Average Val Loss: {average_val_loss:.4f}, Val Acc: {(100 * correct / total):.2f}%, F1 Score: {f1:.4f}, AUC: {auc:.4f}')
 
         if os.path.isfile(f"Classification_our_approach/results/{model_name}_val_results.txt"):
             with open(f"Classification_our_approach/results/{model_name}_val_results.txt", "a") as file:
-                file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
-                            f'{(100 * correct / total):.2f}\n')
+                file.write(f'{fold+1}, {epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
         else:
             with open(f"Classification_our_approach/results/{model_name}_val_results.txt", "a") as file:
-                file.write('Fold, Val Loss, Val Acc [%]\n')
-                file.write(f'{fold+1}, {val_loss/len(val_loader):.4f}, '
-                            f'{(100 * correct / total):.2f}\n')
+                file.write('Fold, Epoch, Average Val Loss, Val Acc, F1 Score, AUC\n')
+                file.write(f'{fold+1}, {epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
+
 
 
 if __name__ == "__main__":
@@ -141,7 +146,7 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     batch_size = 10
     k_folds = 5
-    num_epochs = 20
+    num_epochs = 50
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
