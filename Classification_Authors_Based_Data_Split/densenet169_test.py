@@ -39,12 +39,13 @@ def check_cuda_availability():
     return device
 
 def training_loop(model, model_name, optimizer, loss_function, train_loader, val_loader, num_epochs):
-    model.train()
+    
 
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
 
     for epoch in range(num_epochs):
-        epoch_loss = 0
+        train_loss = 0
+        model.train()
 
         for batch_index, batch_samples in enumerate(train_loader):
             data, target = batch_samples['img'].to(device), batch_samples['label'].to(device)
@@ -61,18 +62,19 @@ def training_loop(model, model_name, optimizer, loss_function, train_loader, val
             # Apply the learning rate scheduler
             scheduler.step()
 
-        average_loss = epoch_loss / len(train_loader)
+        average_loss = train_loss / len(train_loader)
 
         print(f'Epoch: {epoch+1}/{num_epochs},' 
-            f'Average Train Loss: {average_loss:.4f}')
+            f'Average Train Loss: {average_loss:.4f},'
+            f'Last Batch Train Loss: {loss.item():.4f},')
         
         if os.path.isfile(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt"):
             with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt", "a") as file:
-                file.write(f'{epoch+1}, {average_loss:.4f}\n')
+                file.write(f'{epoch+1}, {average_loss:.4f}, {loss.item():.4f}\n')
         else:
             with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_train_results.txt", "a") as file:
-                file.write('Epoch, Average Train Loss\n')
-                file.write(f'{epoch+1}, {average_loss:.4f}\n')
+                file.write('Epoch, Average Train Loss, Last Batch Train Loss\n')
+                file.write(f'{epoch+1}, {average_loss:.4f}, {loss.item():.4f}\n')
 
 
     
@@ -109,15 +111,15 @@ def training_loop(model, model_name, optimizer, loss_function, train_loader, val
         f1 = f1_score(targets, predictions, average='weighted')
         auc = roc_auc_score(targets, predictions)
 
-        print(f'Epoch: {epoch+1}/{num_epochs}, Average Val Loss: {average_val_loss:.4f}, Val Acc: {(100 * correct / total):.2f}%, F1 Score: {f1:.4f}, AUC: {auc:.4f}')
+        print(f'Epoch: {epoch+1}/{num_epochs}, Average Val Loss: {average_val_loss:.4f}, Last Val Loss: {batch_loss:.4f}, Val Acc: {(100 * correct / total):.2f}%, F1 Score: {f1:.4f}, AUC: {auc:.4f}')
 
         if os.path.isfile(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt"):
             with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt", "a") as file:
                 file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
         else:
             with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt", "a") as file:
-                file.write('Epoch, Average Val Loss, Val Acc, F1 Score, AUC\n')
-                file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
+                file.write('Epoch, Average Val Loss, Last Val Loss, Val Acc, F1 Score, AUC\n')
+                file.write(f'{epoch+1}, {average_val_loss:.4f}, {batch_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
 
 def test(model, loss_function, test_loader):
     model.eval()

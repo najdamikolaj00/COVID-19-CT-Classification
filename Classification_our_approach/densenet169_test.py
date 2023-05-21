@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 from sklearn.metrics import f1_score, roc_auc_score
 from sklearn.model_selection import KFold
 from simple_cnn import SimpleCNN
+import torchvision.models as models
 
 def check_cuda_availability():
     if tc.cuda.is_available():
@@ -142,7 +143,6 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
 
 
 
-
 if __name__ == "__main__":
     device = check_cuda_availability()
     
@@ -158,9 +158,10 @@ if __name__ == "__main__":
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
-    model_name = f'SimpleCNN_k{k_folds}_epoch{num_epochs}_batch{batch_size}'
-    model = SimpleCNN()
-    model.to(device)  # Move model to GPU
+    model_name = f'DenseNet169_k{k_folds}_epoch{num_epochs}_batch{batch_size}'
+
+
+    model = models.densenet169(pretrained=True).to(device)
     parameters = model.parameters()
 
     optimizer = tc.optim.Adam(parameters, lr=learning_rate)
