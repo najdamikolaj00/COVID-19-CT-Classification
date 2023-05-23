@@ -57,7 +57,7 @@ def training_loop(model, model_name, optimizer, loss_function, train_loader, val
             loss.backward()
             optimizer.step()
 
-            epoch_loss += loss.item()
+            train_loss += loss.item()
 
             # Apply the learning rate scheduler
             scheduler.step()
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     print(valset.__len__())
     print(testset.__len__())
 
-    num_epochs = 20
+    num_epochs = 50
     model = models.densenet169(pretrained=True).to(device)
     model_name = f'densenet169_epoch{num_epochs}_batch{batchsize}'
 
