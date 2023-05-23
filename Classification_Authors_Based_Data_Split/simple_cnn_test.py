@@ -56,7 +56,7 @@ def training_loop(model, model_name, optimizer, loss_function, train_loader, val
             loss.backward()
             optimizer.step()
 
-            epoch_loss += loss.item()
+            train_loss+= loss.item()
 
             # Apply the learning rate scheduler
             scheduler.step()

@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     learning_rate = 0.0001
     batch_size = 10
-    k_folds = 5
+    k_folds = 3
     num_epochs = 50
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
