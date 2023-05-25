@@ -1,5 +1,5 @@
-Epoch, Average Val Loss, Last Val Loss, Val Acc, F1 Score, AUC
-1, 7.6243, 7.2419, 26.27, 0.3978, 0.4609
+Epoch, Average Val Loss, Val Acc, F1 Score, AUC
+1, 7.6243, 26.27, 0.3978, 0.4609
 2, 2.7451, 66.95, 0.7077, 0.6349
 3, 1.5880, 69.49, 0.7036, 0.6948
 4, 1.5418, 74.58, 0.7538, 0.7279
