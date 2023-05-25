@@ -117,8 +117,8 @@ def training_loop(model, model_name, optimizer, loss_function, train_loader, val
                 file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
         else:
             with open(f"Classification_Authors_Based_Data_Split/results/{model_name}_val_results.txt", "a") as file:
-                file.write('Epoch, Average Val Loss, Last Val Loss, Val Acc, F1 Score, AUC\n')
-                file.write(f'{epoch+1}, {average_val_loss:.4f}, {batch_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
+                file.write('Epoch, Average Val Loss, Val Acc, F1 Score, AUC\n')
+                file.write(f'{epoch+1}, {average_val_loss:.4f}, {(100 * correct / total):.2f}, {f1:.4f}, {auc:.4f}\n')
 
 def test(model, loss_function, test_loader):
     model.eval()
