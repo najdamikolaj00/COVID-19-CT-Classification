@@ -5,9 +5,8 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage{graphicx}
-\usepackage{svg}
 \usepackage{titlesec}
-\usepackage{subfigure}
+
 \setcounter{secnumdepth}{4}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -31,7 +30,7 @@ Dominik Ćwikowski\inst{1}}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{\inst{1}Wrocław University of Science and Technology \\ Faculty of Information and Communication Technology \\
+\institute{\inst{1}Wrocław University of Science and Technology, 
 \email{276928@student.pwr.edu.pl}[Mikołaj Najda]}
 %
 \maketitle              % typeset the header of the contribution 
@@ -40,7 +39,7 @@ Dominik Ćwikowski\inst{1}}
 \begin{abstract}
 Abstrakt napiszemy po zrobieniu całej pracy - 15--250 words.
 
-\keywords{COVID-19 \and DenseNet \and Machine Learning \and Classification.}
+\keywords{COVID-19 \and RASNet \and Machine Learning \and Classification.}
 \end{abstract}
 %
 %
@@ -100,12 +99,12 @@ The target of this work is to test the best deep learning model shown in \cite{h
 
 \subsection{Dataset}
 
-The data for the training set were prepared as part of the Challenge - Grand Challenge on COVID-19 diagnosis from CT images. The images of COVID-19 positive were taken from scientific papers from medRxiv and bioRxiv publications, and the COVID-19 negative from sources such as the MedPix database and PubMed Central. Example CT scans from individuals who have been infected with the virus with visible lesions are shown in (Figure \ref{covidPositive}) and healthy individuals are presented in (Figure \ref{covidNegative}). COVID-related and non-COVID data information is presented in (Table \ref{imageDetails}).
+The data for the training set were prepared as part of the Challenge - Grand Challenge on COVID-19 diagnosis from CT images. The images of COVID-19 positive were taken from scientific papers from medRxiv and bioRxiv publications, and the COVID-19 negative from sources such as the MedPix database and PubMed Central. Example CT scans from individuals who have been infected with the virus with visible lesions are shown in (Figure \ref{covidPositive}) and healthy individuals are presented in (Figure \ref{covidNegative}). Information about COVID-related and non-COVID data is presented in (Table \ref{imageDetails}).
 \newline
 
 Key notes about data:
 \begin{itemize}
-  \item The corpus of test and validation images was procured from an external source featuring computed tomography (CT) images that were not acquired via paper downloads. Notwithstanding, the authors solely furnished the data distribution pertaining to the training, validation, and testing sets based on the images obtained from the papers, as demonstrated in Table \ref{imageDistributionAuthors}. They were preventing the proper comparasion to their's results shown in the article.
+  \item The corpus of test and validation images was procured from an external source featuring computed tomography (CT) images that were not acquired via paper downloads. Notwithstanding, the authors solely furnished the data distribution pertaining to the training, validation, and testing sets based on the images obtained from the papers, as demonstrated in Table \ref{imageDistributionAuthors}. Preventing the proper comparasion to their's results shown in the paper.
   \item Utilizing a data split, as implemented by the authors, may not be optimal when dealing with a relatively small number of images (n $<$ 1000), as suggested in \cite{kfoldcrossvalidationN1000}. Given that each data example is crucial for effectively training a model, we opted to utilize k-fold cross-validation instead of the holdout method in our approach, to mitigate the potential for model overfitting.
   \item Due to the small dataset, data augmentation has been performed using different random affine transformations such as random cropping with a scale of 0.5, horizontal flip as well as colour jittering with random contrast and random brightness with a factor of 0.2. However additional augmentations were added for the self-supervised approach.
 \end{itemize}
@@ -161,119 +160,28 @@ test & 105  & 98 & 203\\ \cline{1-4}
 \end{tabular}
 \end{table} 
 
-\newpage
 
 \subsection{Research protocol}
 \begin{enumerate}
   \item Perform preprocessing on data and load dataset.
-  \newline
-  The first step is to gather the data and prepare it for future models' learning. The data gathered by the authors of the challenge will be loaded using implemented data loader. The image transformation will be applied, it includes normalization, resizing and cropping to ensure that all the images are of the same size. Of course, images are going to be transformed into tensors in order to use the PyTorch library. However, further preprocessing might include data augmentation, if so the details will be provided.
   \item K-fold cross-validation or authors' based dataset split.
-  \newline
-  Due to lack of the data, the k-fold cross-validation is going to be applied in our approach compared to the authors' established in advance data split. K-fold cross-validation makes the most out of the available data and should help to obtain reliable performance estimates for models. By applying k-fold cross-validation, we can mitigate the impact of data deficiency and reduce the risk of overfitting or obtaining overly optimistic performance estimates. 
-  \item Implementing the chosen models and the learning process.
-  \newline
-  We are going to try and implement our own CNN, SimpleCNN architecture based on the authors' article and the best promising model from the article that we are focused on, which is DenseNet169 used with a transfer-learning approach. Also, the preparation of other solutions using the PCA and SVM as an approach with state-of-art machine learning methods is going to be done. The proper training loop will be implemented.
-  \item Training the models.
-  \newline
-  We will gather the best results and perform the metrics, such as accuracy, F1-score and AUC.
-  \item Statistics interpretation (statystyka parowa).
-  \newline
-  The choice of statistical test depends on the nature of the data and the specific objectives of the analysis. Some common tests include t-tests, chi-square tests, or ANOVA. The specific test chosen will depend on factors like the number of groups to compare, the distribution of data, and whether the data is paired or independent.
-  Analization of the statistical results to determine if there are significant differences in performance between the models will be made, considering the p-values. If the differences are statistically significant, we can conclude that there is a notable distinction in performance between the models. However, if the differences are not statistically significant, we cannot confidently claim that one model is superior to the other based on the available evidence.
-  \item Explanation of the models' performance.
-  \newline
-  The best model will be chosen and we are going to try to check what the model took into consideration when performing such a result.
-  \item Conclusion.
-  \newline
-  The answers to research questions...
+  \item Model learning.
+  \item Fine-tuning the model based on the validation results.
+  \item Perform statistics (statystyka parowa).
+  \item Compare the metrics result.
 \end{enumerate}
 
 \subsection{Description of the experimental environment}
-The project is written in Python programming language. PyTorch and scikit-learn (sklearn), widely used Python modules for machine learning, will be utilized for the development of the CNN and other state-of-the-art machine learning approaches.
-
-\begin{table}[]
-\caption{Components description.}
-\centering
-\begin{tabular}{|c|c|}
-\hline
-Component     & Description               \\ \hline
-Graphics Card & NVIDIA GeForce GTX 1060   \\ \hline
-Memory        & 6GB                       \\ \hline
-Processor     & Intel(R) Core(TM) i5-7400 \\ \hline
-CPU           & 3.00GHz                   \\ \hline
-RAM           & 16GB                      \\ \hline
-Storage       & 1TB SSD                   \\ \hline
-\end{tabular}
-\end{table}
-
+The project will be written in Python programming language, with Jupyter Notebook as the preferred Integrated Development Environment on the Google Colab cloud-based service that provides free access to GPU resources. PyTorch and scikit-learn (sklearn), widely used Python modules for machine learning, will be utilized for the development of the CNN and other state-of-the-art machine learning approaches.
 
 \section{Methods and evaluation}
 
-\subsection{Models}
-\textbf{DenseNet169} is a convolutional neural network (CNN) architecture that belongs to the DenseNet family. It is designed to address the challenges of vanishing gradients and feature reuse in deep neural networks. DenseNet169 introduces the concept of dense connectivity, where each layer is directly connected to every other layer in a feed-forward fashion. This dense connectivity promotes feature reuse and enables efficient information flow throughout the network. DenseNet169 has 169 layers and utilizes a combination of convolutional, pooling, and dense (fully connected) layers. It has been widely used for tasks such as image classification and object detection. In this work, the model was pre-trained on the ImageNet dataset.
-\newline
-\textbf{SimpleCNN} (Fig. \ref{SimpleCNNs}) is a basic CNN architecture used for image classification tasks. It consists of two main parts: a convolutional layer followed by a fully connected layer. The convolutional layer applies a set of filters to extract features from the input image. The ReLU activation function is applied to introduce non-linearity, and max pooling is used to downsample the feature maps. The output of the convolutional layer is then flattened and passed through a fully connected layer, which maps the extracted features to the desired number of classes. SimpleCNN is relatively straightforward and serves as a good starting point for learning and understanding CNN architectures.
-\newline
-\textbf{EnhancedCNN} (Fig. \ref{SimpleCNNs}) refers to an improved version of the SimpleCNN architecture, which incorporates additional techniques to enhance its performance. These enhancements include batch normalization and dropout regularization. Batch normalization normalizes the inputs of each layer to reduce the internal covariate shift, which can improve the stability and speed of training. Dropout regularization randomly sets a fraction of the input units to zero during training, reducing overfitting and promoting better generalization. By incorporating these techniques, EnhancedCNN aims to improve the model's ability to learn and generalize from the data, leading to enhanced performance in image classification tasks.
-
-\subsection{Data transformations}
-
-
-\subsection{Workflow process}
-\begin{figure}[h]
-\centering
-{
-\includegraphics[width=0.80\textwidth]{LaTeX_script/Schema/workflow2.png}
-}
-\label{SimpleCNNs}
-\caption{Workflow based on authors data split.}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-{
-\includegraphics[width=0.80\textwidth]{LaTeX_script/Schema/workflow1.png}
-}
-\label{SimpleCNNs}
-\caption{Workflow based on k-fold cross-validation.}
-\end{figure}
-\subsection{PCA and SVM}
-
 \section{Results}
-\begin{table}[]
-\caption{Training parameters.}
-\centering
-\begin{tabular}{|cc|}
-\hline
-\multicolumn{1}{|c|}{Parameter }     & Value              \\ \hline
-\multicolumn{1}{|c|}{Learning rate} & 0.0001   \\ \hline
-\multicolumn{1}{|c|}{Batch size}        & 10                       \\ \hline
-\multicolumn{1}{|c|}{Number of epochs }     & 50 \\ \hline
-\multicolumn{1}{|c|}{Optimizer}           & Adam                   \\ \hline
-\multicolumn{1}{|c|}{Loss function}           & Cross Entropy                   \\ \hline
-\multicolumn{2}{|c|}{Optional (when k-fold cross-validation performed)}                                          \\ \hline
-\multicolumn{1}{|c|}{K folds}       & 3 or 5                  \\ \hline
-\end{tabular}
-\end{table}
+%MOZE SAMI WYKORZYSTAMY Grad-CAM do wizualizacji wynikow/wyglada ciekawie
+
 \section{Summary}
 
 
-\input{references}
-
-\begin{figure}[h]
-\centering
-\subfigure[SimpleCNN architecture.]
-{
-\includegraphics[width=0.30\textwidth]{Models/SimpleCNN.pdf}
-}
-\subfigure[EnhancedCNN architecture.]
-{
-\includegraphics[width=0.30\textwidth]{Models/EnhancedCNN.pdf}
-}
-\label{SimpleCNNs}
-\caption{Models' architecture.}
-\end{figure}
 %
 % ---- Bibliography ----
 %
@@ -282,4 +190,5 @@ Storage       & 1TB SSD                   \\ \hline
 %
 % \bibliographystyle{splncs04}
 % \bibliography{mybibliography}
+\input{references}
 \end{document}
