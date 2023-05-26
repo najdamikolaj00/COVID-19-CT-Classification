@@ -17,6 +17,9 @@ def check_cuda_availability():
         device = tc.device("cpu")
     return device
 
+def save_model(model, model_path):
+    tc.save(model.state_dict(), model_path)
+
 def k_fold_cv_dataset_split(dataset, k_folds, batch_size):
     random_state = 42
     kfold = KFold(n_splits=k_folds, shuffle=True, random_state=random_state)
@@ -71,8 +74,7 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
                 labels = labels.to(device)  # Move labels to GPU
 
                 outputs = model(inputs)
-                tc.onnx.export(model, inputs, "SimpleCNN.onnx", input_names=["features"], output_names=["output"])
-                # Compute loss
+               # Compute loss
                 loss = loss_function(outputs, labels)
                 batch_loss = loss_function(outputs, labels).item()
                 train_loss += batch_loss
@@ -154,7 +156,7 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     batch_size = 10
     k_folds = 3
-    num_epochs = 50
+    num_epochs = 20
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
 
@@ -168,3 +170,7 @@ if __name__ == "__main__":
 
     train_loaders, val_loaders = k_fold_cv_dataset_split(dataset, k_folds=k_folds, batch_size=batch_size)
     training_loop(model_name, model, optimizer, loss_function, k_folds, train_loaders, val_loaders, num_epochs)
+    save_model(model, 'SimpleCNN.pt')
+
+    #for loading
+    #model.load_state_dict(tc.load('path/to/saved/model.pth'))
