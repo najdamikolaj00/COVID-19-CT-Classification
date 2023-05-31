@@ -8,6 +8,8 @@
 \usepackage{svg}
 \usepackage{titlesec}
 \usepackage{subfigure}
+\usepackage[shortlabels]{enumitem}
+\usepackage{float}
 \setcounter{secnumdepth}{4}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -110,7 +112,7 @@ Key notes about data:
   \item Due to the small dataset, data augmentation has been performed using different random affine transformations such as random cropping with a scale of 0.5, horizontal flip as well as colour jittering with random contrast and random brightness with a factor of 0.2. However additional augmentations were added for the self-supervised approach.
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[H]
 \label{imageDetails}
 \centering
 \caption{Dataset details.}
@@ -122,7 +124,7 @@ Key notes about data:
 \end{tabular}
 \end{table} 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 {
 \includegraphics[width=0.40\textwidth]{imagesDatasetSection/covid1.png}
@@ -135,7 +137,7 @@ Key notes about data:
 \caption{CT COVID Positive.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 {
 \includegraphics[width=0.30\textwidth]{imagesDatasetSection/noncovid1.jpg}
@@ -148,7 +150,7 @@ Key notes about data:
 \caption{CT COVID Negative.}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \label{imageDistributionAuthors}
 \centering
 \caption{Author's images distribution.}
@@ -160,8 +162,6 @@ validation & 58 & 60 & 118\\ \cline{1-4}
 test & 105  & 98 & 203\\ \cline{1-4}
 \end{tabular}
 \end{table} 
-
-\newpage
 
 \subsection{Research protocol}
 \begin{enumerate}
@@ -192,7 +192,7 @@ test & 105  & 98 & 203\\ \cline{1-4}
 \subsection{Description of the experimental environment}
 The project is written in Python programming language. PyTorch and scikit-learn (sklearn), widely used Python modules for machine learning, will be utilized for the development of the CNN and other state-of-the-art machine learning approaches.
 
-\begin{table}[]
+\begin{table}[H]
 \caption{Components description.}
 \centering
 \begin{tabular}{|c|c|}
@@ -211,37 +211,50 @@ Storage       & 1TB SSD                   \\ \hline
 \section{Methods and evaluation}
 
 \subsection{Models}
-\textbf{DenseNet169} is a convolutional neural network (CNN) architecture that belongs to the DenseNet family. It is designed to address the challenges of vanishing gradients and feature reuse in deep neural networks. DenseNet169 introduces the concept of dense connectivity, where each layer is directly connected to every other layer in a feed-forward fashion. This dense connectivity promotes feature reuse and enables efficient information flow throughout the network. DenseNet169 has 169 layers and utilizes a combination of convolutional, pooling, and dense (fully connected) layers. It has been widely used for tasks such as image classification and object detection. In this work, the model was pre-trained on the ImageNet dataset.
+\textbf{DenseNet169} is a convolutional neural network (CNN) architecture that belongs to the DenseNet family. It introduces the concept of dense connectivity, where each layer is directly connected to every other layer in a feed-forward fashion. DenseNet169 has 169 layers and utilizes a combination of convolutional, pooling, and dense (fully connected) layers. It has been widely used for tasks such as image classification and object detection. In this work, the model was pre-trained on the ImageNet dataset.
 \newline
-\textbf{SimpleCNN} (Fig. \ref{SimpleCNNs}) is a basic CNN architecture used for image classification tasks. It consists of two main parts: a convolutional layer followed by a fully connected layer. The convolutional layer applies a set of filters to extract features from the input image. The ReLU activation function is applied to introduce non-linearity, and max pooling is used to downsample the feature maps. The output of the convolutional layer is then flattened and passed through a fully connected layer, which maps the extracted features to the desired number of classes. SimpleCNN is relatively straightforward and serves as a good starting point for learning and understanding CNN architectures.
+\textbf{SimpleCNN} (Fig. \ref{SimpleCNNs}) consists of two main parts: a convolutional layer followed by a fully connected layer. The convolutional layer applies a set of filters to extract features from the input image. The ReLU activation function is applied to introduce non-linearity, and max pooling is used to downsample the feature maps. The output of the convolutional layer is then flattened and passed through a fully connected layer, which maps the extracted features to the desired number of classes. SimpleCNN is relatively straightforward and serves as a good starting point for learning and understanding CNN architectures.
 \newline
-\textbf{EnhancedCNN} (Fig. \ref{SimpleCNNs}) refers to an improved version of the SimpleCNN architecture, which incorporates additional techniques to enhance its performance. These enhancements include batch normalization and dropout regularization. Batch normalization normalizes the inputs of each layer to reduce the internal covariate shift, which can improve the stability and speed of training. Dropout regularization randomly sets a fraction of the input units to zero during training, reducing overfitting and promoting better generalization. By incorporating these techniques, EnhancedCNN aims to improve the model's ability to learn and generalize from the data, leading to enhanced performance in image classification tasks.
+\textbf{EnhancedCNN} (Fig. \ref{SimpleCNNs}) refers to an improved version of the SimpleCNN architecture, which incorporates additional techniques to enhance its performance. These enhancements include batch normalization and dropout regularization. Batch normalization normalizes the inputs of each layer to reduce the internal covariate shift, which can improve the stability and speed of training. Dropout regularization randomly sets a fraction of the input units to zero during training, reducing overfitting and promoting better generalization. By incorporating these techniques, we aim to improve the model's ability to learn and generalize from the data.
 
 \subsection{Data transformations}
+These transformations are provided by the challenge authors and are performed as well in our data split approach. The transformations for the test set are the same as for the validation set. Images are also converted into PyTorch tensors.\par
 
+For the training set:
+\begin{itemize}
+  \item Resize: The images are resized to a height and width of 256 pixels while preserving the aspect ratio. Antialiasing is applied to smooth the edges during the resizing process.
+  \item RandomResizedCrop: A random crop of size 224x224 is taken from the resized image. The scale parameter specifies the range of scales to randomly sample from, in this case, between 0.5 and 1.0. This helps in data augmentation and introduces diversity in the training set.
+  \item RandomHorizontalFlip: The image is randomly flipped horizontally with a certain probability. This augmentation technique helps to increase the variability of the training data by providing different perspectives of the same object.
+\end{itemize}
+
+For the test and validation set:
+\begin{itemize}
+  \item Resize: The images are resized to a fixed size of 224x224 pixels while preserving the aspect ratio. Antialiasing is applied to ensure the smoothness of the resized images.
+  \item CenterCrop: A central crop of size 224x224 is taken from the resized image. This ensures that the validation images are consistently centered and have the same size as the training images.
+\end{itemize}
 
 \subsection{Workflow process}
-\begin{figure}[h]
+
+\begin{figure}[H]
 \centering
 {
 \includegraphics[width=0.80\textwidth]{LaTeX_script/Schema/workflow2.png}
 }
 \label{SimpleCNNs}
-\caption{Workflow based on authors data split.}
+\caption{Workflow A based on authors' data split.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 {
 \includegraphics[width=0.80\textwidth]{LaTeX_script/Schema/workflow1.png}
 }
 \label{SimpleCNNs}
-\caption{Workflow based on k-fold cross-validation.}
+\caption{Workflow B based on k-fold cross-validation.}
 \end{figure}
-\subsection{PCA and SVM}
 
 \section{Results}
-\begin{table}[]
+\begin{table}[H]
 \caption{Training parameters.}
 \centering
 \begin{tabular}{|cc|}
@@ -256,12 +269,120 @@ Storage       & 1TB SSD                   \\ \hline
 \multicolumn{1}{|c|}{K folds}       & 3 or 5                  \\ \hline
 \end{tabular}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\subfigure[DenseNet169 learning curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/DenseNet169_average_loss_plot.pdf}
+}
+\quad
+\subfigure[SimpleCNN learning curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/SimpleCNN_average_loss_plot.pdf}
+}
+\quad
+\subfigure[EnhancedCNN learning curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/EnhancedCNN_average_loss_plot.pdf}
+}
+\label{AvgPlotA}
+\caption{Average Train Loss and Validation Loss curves for workflow A.}
+\end{figure}
+
+Diagnose the models' performance based on the article at website \cite{LearningCurves}:
+\begin{enumerate}[(a)]
+\item There is a minimal gap between those two curves and both of them continue to decrease which means that the model is learning well.
+\item The learning curves show noisy movement, there is a problem with the unrepresentative dataset for each, train and validation dataset.
+\item In an example of EnhancedCNN it is worth seeing that the validation learning curve is increasing when the train learning curve is decreasing with experience which suggests that the model is likely overfitting.
+\end{enumerate}
+
+\begin{table}[H]
+\caption{Results for workflow A.}
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Model       & Dataset    & Accuracy & F1 score & AUC \\ \hline
+\textbf{DenseNet169} &            &     \textbf{75.28}        &    \textbf{0.76}    &   \textbf{0.75}  \\ \cline{1-1} \cline{3-5} 
+SimpleCNN   & Validation (average results) &      61.73     &      0.59    &   0.62  \\ \cline{1-1} \cline{3-5} 
+EnhancedCNN &            &        65.23          &     0.65     &   0.65  \\ \hline
+\textbf{DenseNet169} &            &      \textbf{80.79}        &    \textbf{0.81}      &   \textbf{0.81} \\ \cline{1-1} \cline{3-5} 
+SimpleCNN   & Test       &       61.57       &     0.61    &   0.62 \\ \cline{1-1} \cline{3-5} 
+EnhancedCNN &            &          67.98        &     0.68     &   0.68  \\ \hline
+\end{tabular}
+\label{ResultsB}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\subfigure[DenseNet169 train loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/DenseNet169_k3_average_train_loss_plot.pdf}
+}
+\quad
+\subfigure[DenseNet169 validation loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/DenseNet169_k3_average_val_loss_plot.pdf}
+}
+\quad
+\subfigure[EnhancedCNN train loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/EnhancedCNN_k3_average_train_loss_plot.pdf}
+}
+\quad
+\subfigure[Enhanced validation loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/EnhancedCNN_k3_average_val_loss_plot.pdf}
+}
+\quad
+\subfigure[SimpleCNN train loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/SimpleCNN_k3_average_train_loss_plot.pdf}
+}
+\quad
+\subfigure[SimpleCNN validation loss curves]
+{
+\includegraphics[width=0.45\textwidth]{LaTeX_script/Plots/SimpleCNN_k3_average_val_loss_plot.pdf}
+}
+\label{AvgPlotB}
+\caption{Average Train Loss and Validation Loss for workflow B and 3 folds.}
+\end{figure}
+
+Diagnose the models' performance based on the article at website \cite{LearningCurves}:
+
+\begin{enumerate}[(a)]
+\item The training loss looks like a good fit for each fold.
+\item The validation loss curves show noisy movements for each fold which may mean that the validation dataset is not representative.
+\item The training dataset is unrepresentative and the train loss curves for each fold occur as noisy plots.
+\item The validation dataset is unrepresentative and the val loss curves for each fold occur as noisy plots.
+\item For the first fold the model looks like a good fit but in the next 2 folds seems like a underfit.
+\item For the first fold the model looks like a good fit but in the next 2 folds seems like a underfit. This problem is common when the model does not have a suitable capacity for the complexity of the dataset.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{Results for workflow B.}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Model       & Folds number & Avg. accuracy & Avg. F1 score & Avg. AUC   \\ \hline
+DenseNet169 &              & 50.569 \%        & 0.376    & 0.477 \\ \cline{1-1} \cline{3-5} 
+\textbf{SimpleCNN}   & 3            & \textbf{65.681} \%        & \textbf{0.609}    & \textbf{0.646} \\ \cline{1-1} \cline{3-5} 
+EnhancedCNN &              & 53.425 \%        & 0.480    & 0.517 \\ \hline
+DenseNet169 &              & 51.769 \%        & 0.381    & 0.487 \\ \cline{1-1} \cline{3-5} 
+\textbf{SimpleCNN}   & 5            & \textbf{71.009} \%        & \textbf{0.683}    & \textbf{0.707} \\ \cline{1-1} \cline{3-5} 
+EnhancedCNN &              & 52.005 \%        & 0.442    & 0.499 \\ \hline
+\end{tabular}
+\label{ResultsA}
+\end{table}
+
+\subsection{GradCam?}
+
 \section{Summary}
 
 
 \input{references}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \subfigure[SimpleCNN architecture.]
 {
