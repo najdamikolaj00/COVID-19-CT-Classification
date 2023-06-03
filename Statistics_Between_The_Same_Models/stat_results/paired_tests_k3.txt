@@ -1,0 +1,42 @@
+Metric: F1 Score
+Approach 1 vs Approach 2:
+Tests for model:DenseNet169
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 6.789550643016736e-38
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:SimpleCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 6.789550643016736e-38
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:EnhancedCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 6.789550643016736e-38
+There is a significant difference between the two approaches (p-value < 0.05)
+Metric: Val Acc
+Approach 1 vs Approach 2:
+Tests for model:DenseNet169
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.2087517667400034e-26
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:SimpleCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.2087517667400034e-26
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:EnhancedCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.2087517667400034e-26
+There is a significant difference between the two approaches (p-value < 0.05)
+Metric: AUC
+Approach 1 vs Approach 2:
+Tests for model:DenseNet169
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.0588241916546037e-34
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:SimpleCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.0588241916546037e-34
+There is a significant difference between the two approaches (p-value < 0.05)
+Tests for model:EnhancedCNN
+Shapiro-Wilk p-value: 1.0
+T-Test p-values: 1.0588241916546037e-34
+There is a significant difference between the two approaches (p-value < 0.05)

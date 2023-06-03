@@ -1,0 +1,30 @@
+Metryka: f1
+Test Shapiro-Wilka (normalność):
+p-value: 3.677192673723151e-24
+Test Levene'a (homogeniczność wariancji):
+p-value: 2.504536941705293e-12
+Warunki testu ANOVA nie są spełnione.
+Przeprowadzanie testu Kruskala-Wallisa...
+Statistic: 434.8927351062599
+p-value: 3.6664220977952535e-95
+Występuje istotna różnica między grupami.
+Metryka: acc
+Test Shapiro-Wilka (normalność):
+p-value: 3.2051402801911605e-23
+Test Levene'a (homogeniczność wariancji):
+p-value: 6.2806137156812195e-15
+Warunki testu ANOVA nie są spełnione.
+Przeprowadzanie testu Kruskala-Wallisa...
+Statistic: 428.2715765188504
+p-value: 1.0046361026446966e-93
+Występuje istotna różnica między grupami.
+Metryka: auc
+Test Shapiro-Wilka (normalność):
+p-value: 5.899223853895438e-30
+Test Levene'a (homogeniczność wariancji):
+p-value: 5.515572092407389e-44
+Warunki testu ANOVA nie są spełnione.
+Przeprowadzanie testu Kruskala-Wallisa...
+Statistic: 455.6650231439304
+p-value: 1.13135115910275e-99
+Występuje istotna różnica między grupami.
