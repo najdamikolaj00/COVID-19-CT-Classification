@@ -1,0 +1,7 @@
+Shapiro-Wilk p-value: 3.870876882916541e-11
+Shapiro-Wilk p-value: 7.848975917996992e-14
+Shapiro-Wilk p-value: 4.994373359323845e-09
+Difference distribution is not normal.
+
+Wilcoxon p-value: 1.340150549645785e-120
+There is a significant difference between the two models (p-value < 0.05)
