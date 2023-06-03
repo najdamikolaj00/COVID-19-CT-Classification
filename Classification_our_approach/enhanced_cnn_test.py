@@ -71,8 +71,7 @@ def training_loop(model_name, model, optimizer, loss_function, k_folds, train_lo
                 labels = labels.to(device)  # Move labels to GPU
 
                 outputs = model(inputs)
-                tc.onnx.export(model, inputs, "SimpleCNN.onnx", input_names=["features"], output_names=["output"])
-                # Compute loss
+               # Compute loss
                 loss = loss_function(outputs, labels)
                 batch_loss = loss_function(outputs, labels).item()
                 train_loss += batch_loss
@@ -153,7 +152,7 @@ if __name__ == "__main__":
 
     learning_rate = 0.0001
     batch_size = 10
-    k_folds = 3
+    k_folds = 5
     num_epochs = 50
 
     dataset_loader = DataLoader(dataset, batch_size=batch_size, drop_last=False, shuffle=True)
