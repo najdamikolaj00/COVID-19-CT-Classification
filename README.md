@@ -14,8 +14,6 @@ The project is developed in Python programming language and executed in Jupyter 
 
 The project uses two different dataset split approaches to train and test the models. The best model presented in the authors' approach is tested, followed by other proposed CNNs. The performance of the models is compared using common metrics, including F1-score, AUC and Accuracy.
 
-## Results
-
 ## Repository Structure
 ```
 |-- Classification_Authors_Based_Data_Split/
