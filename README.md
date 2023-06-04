@@ -2,8 +2,7 @@
 
 ## Project Overview
 
-The objective of this project is to develop and compare state-of-the-art machine learning approaches for Covid-19 image classification tasks, with the aim of providing constructive criticism for the data split approach proposed by the authors of the challenge. The project leverages convolutional neural networks (CNNs) and other machine learning algorithms to classify images from the provided dataset. In addition to presenting a literature review and implementation details, this project provides a comparison of model performance and a summary of the findings.
-
+The objective of this project is to develop machine learning approaches for Covid-19 image classification task, with the aim of providing constructive criticism for the data split approach proposed by the authors of the challenge. The project leverages convolutional neural networks (CNNs) to classify images from the provided dataset. In addition to presenting a literature review and implementation details, this project provides a comparison of model performance and a summary of the findings.
 
 ## [Dataset & Challenge](https://github.com/UCSD-AI4H/COVID-CT)
 
@@ -11,9 +10,9 @@ The data for the training set were prepared as part of the Challenge - Grand Cha
 
 ## Experimental Setup
 
-The project is developed in Python programming language and executed in Jupyter Notebooks on Google Colab. PyTorch and scikit-learn are used for the development of CNNs and other machine learning models.
+The project is developed in Python programming language and executed in Jupyter Notebooks. PyTorch and scikit-learn are used for the development of CNNs.
 
-The project uses four different dataset split approaches to train and test the models. The best model presented in the authors' approach is tested, followed by other state-of-the-art methods and the proposed CNN. The performance of the models is compared using common metrics, including F1-score, confusion matrix, and ROC Curve.
+The project uses two different dataset split approaches to train and test the models. The best model presented in the authors' approach is tested, followed by other proposed CNNs. The performance of the models is compared using common metrics, including F1-score, AUC and Accuracy.
 
 ## Results
 
@@ -28,8 +27,25 @@ The project uses four different dataset split approaches to train and test the m
 |   |   |-- testCT_COVID.txt
 |   |   |-- trainCT_COVID.txt
 |   |   |-- valCT_COVID.txt
+|   |-- results/(models' performance)
 |   |-- data_loader.py
+|   |-- densenet169_test.py
+|   |-- enhancedcnn_test.py
+|   |-- enhancedcnn.py
+|   |-- results_visualization.ipynb
+|   |-- simplecnn_test.py
+|   |-- simplecnn.py
 |-- Classification_our_approach/
+|   |-- results/(models' performance)
+|   |-- CT_COVID.txt
+|   |-- CT_NonCOVID.txt
+|   |-- data_loader.py
+|   |-- densenet169_test.py
+|   |-- enhancedcnn_test.py
+|   |-- enhancedcnn.py
+|   |-- results_visualization.ipynb
+|   |-- simplecnn_test.py
+|   |-- simplecnn.py
 |-- Data/
 |   |-- CT_COVID/
 |   |   |-- images
@@ -43,6 +59,7 @@ The project uses four different dataset split approaches to train and test the m
 |   |-- references.tex
 |   |-- splncs04.bst
 |-- .gitignore
+|-- COVID_19_CT_Classification_UNI_Project.pdf
 |-- README.md
 |-- requirements.txt
 ```
@@ -58,6 +75,10 @@ git clone https://github.com/najdamikolaj00/COVID-19-CT-Classification.git
 ```
 pip install -r requirements.txt
 ```
-3. ...
+3. ... Go on!
 
 ## Conclusion
+  In this project, we have explored the topic of workflow optimization in the context of machine learning models. The main objective was to compare the performance of three different models (DenseNet169, SimpleCNN, and EnhancedCNN) across two different workflows (Workflow A and Workflow B). The evaluation of these models was based on three metrics: F1-score, Accuracy, and AUC.
+  Initially, we preprocessed the dataset and split it into training and validation sets using k-fold cross-validation. Then, we trained the models using a fixed number of epochs and recorded their performance on the training and validation set for each workflow which is shown on the learning curves plots.
+  The analysis of the results revealed interesting insights. For Workflow A, the T-test and Wilcoxon test showed significant differences in performance between the models for the F1-score, Accuracy, and AUC metrics. In particular, DenseNet169 exhibited superior performance compared to other models in terms of the F1-score and AUC. For Workflow B, SimpleCNN indicated better performance in classification. This suggests that the choice of workflow has a substantial impact on the models' performance in terms of these metrics.
+  Overall, the statistical analysis highlights the importance of model selection in proposed workflows. The results demonstrate the significant differences in performance among the three models and emphasize the need for careful consideration when choosing the most suitable model for a given workflow.
